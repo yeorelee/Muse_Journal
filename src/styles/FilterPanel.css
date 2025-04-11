@@ -1,0 +1,28 @@
+/* src/styles/FilterPanel.css */
+.filter-panel {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 180px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.filter-panel h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+label {
+    display: block;
+    margin: 4px 0;
+}

@@ -1,0 +1,30 @@
+/* src/styles/BubbleChart.css */
+.bubble-chart-container {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-left: 20px;
+    background-color: #ffece6;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.bubble {
+    background-color: #fbdacb;
+    color: #5a3e36;
+    border-radius: 50%;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bubble-text {
+    display: inline-block;
+    text-align: center;
+}
