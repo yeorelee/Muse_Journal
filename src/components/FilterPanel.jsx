@@ -18,21 +18,21 @@ function FilterPanel({ currentView, onViewChange }) {
                         onClick={() => onViewChange('GRAPH')}
                         title="Graph View"
                     >
-                        <img src="/icons/graph-icon.png" alt="Graph View" />
+                        <img src="/graph-icon.png" alt="Graph View" />
                     </button>
                     <button
                         className={`view-icon-btn ${currentView === 'LIST' ? 'active' : ''}`}
                         onClick={() => onViewChange('LIST')}
                         title="List View"
                     >
-                        <img src="/icons/list-icon.png" alt="List View" />
+                        <img src="/list-icon.png" alt="List View" />
                     </button>
                     <button
                         className={`view-icon-btn ${currentView === 'CALENDAR' ? 'active' : ''}`}
                         onClick={() => onViewChange('CALENDAR')}
                         title="Calendar View"
                     >
-                        <img src="/icons/calendar-icon.png" alt="Calendar View" />
+                        <img src="/calendar-icon.png" alt="Calendar View" />
                     </button>
                 </div>
             </div>

@@ -10,10 +10,11 @@ function App() {
         // your sample entries...
     ]);
 
-    const addEntry = (entryText, emotion) => {
+    const addEntry = (entryText, emotion, entryDate) => {
         const newEntry = {
             id: Date.now(),
-            date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            date: entryDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            timestamp: entryDate, // Store the actual date object for sorting
             emotion,
             text: entryText,
         };
