@@ -1,8 +1,9 @@
 /* src/styles/AddEntryModal.css */
+/* AddEntryModal.css */
 .add-entry-btn {
     position: fixed;
     bottom: 20px;
-    left: 20px; /* Adjust if you want it bottom-left or bottom-right */
+    right: 20px;
     width: 50px;
     height: 50px;
     font-size: 24px;
@@ -11,11 +12,14 @@
     color: white;
     border: none;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .add-entry-btn:hover {
-    background-color: #e77f5f;
+    background-color: #f28e66;
 }
 
 .modal-overlay {

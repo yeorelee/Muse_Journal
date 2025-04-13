@@ -1,28 +1,140 @@
 /* src/styles/FilterPanel.css */
 .filter-panel {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    min-width: 180px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background-color: #ffffff; /* White background for a clean look */
+    padding: 20px;
+    border-radius: 12px; /* Rounded corners */
+    min-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-family: 'Inter', sans-serif;
+    color: #333; /* Darker text for better readability */
 }
 
 .filter-panel h3 {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: 600;
+    font-size: 1.2rem;
+    color: #555; /* Slightly muted header color */
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* Divider below the title */
+    padding-bottom: 10px;
 }
 
 .filter-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f9f9f9; /* Light background for headers */
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.filter-header:hover {
+    background-color: #f0f0f0; /* Slightly darker on hover */
 }
 
 .filter-label {
     font-weight: 500;
-    margin-bottom: 5px;
+    font-size: 1rem;
+    margin: 0;
 }
 
-label {
+.filter-content {
+    margin-top: 10px;
+    padding-left: 10px;
+    animation: fadeIn 0.3s ease; /* Smooth fade-in effect */
+}
+
+.filter-content label {
     display: block;
-    margin: 4px 0;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.filter-content input[type="radio"] {
+    margin-right: 8px;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #888; /* Muted color for toggle button */
+    transition: color 0.3s ease;
+}
+
+.toggle-btn:hover {
+    color: #555; /* Darker color on hover */
+}
+
+/* Add these styles to src/styles/FilterPanel.css */
+.view-toggle-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.view-toggle-label {
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.view-toggle-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.view-icon-btn {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.view-icon-btn:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.view-icon-btn.active {
+    background-color: #fa9775;
+    border-color: #fa9775;
+}
+
+.view-icon-btn.active img {
+    filter: brightness(0) invert(1);
+}
+
+.view-icon-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

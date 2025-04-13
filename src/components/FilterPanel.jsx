@@ -1,35 +1,84 @@
 // src/components/FilterPanel.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/FilterPanel.css';
 
-function FilterPanel() {
+function FilterPanel({ currentView, onViewChange }) {
+    const [isGroupByExpanded, setIsGroupByExpanded] = useState(true);
+    const [isTimeFrameExpanded, setIsTimeFrameExpanded] = useState(true);
+
     return (
         <div className="filter-panel">
-            <h3>Filters</h3>
-            <div className="filter-group">
-                <p className="filter-label">Group by</p>
-                <label>
-                    <input type="radio" name="group" defaultChecked /> Emotion
-                </label>
-                <label>
-                    <input type="radio" name="group" /> Ideas
-                </label>
+
+            {/* View Toggle Section */}
+            <div className="view-toggle-section">
+                <p className="view-toggle-label"></p>
+                <div className="view-toggle-buttons">
+                    <button
+                        className={`view-icon-btn ${currentView === 'GRAPH' ? 'active' : ''}`}
+                        onClick={() => onViewChange('GRAPH')}
+                        title="Graph View"
+                    >
+                        <img src="/icons/graph-icon.png" alt="Graph View" />
+                    </button>
+                    <button
+                        className={`view-icon-btn ${currentView === 'LIST' ? 'active' : ''}`}
+                        onClick={() => onViewChange('LIST')}
+                        title="List View"
+                    >
+                        <img src="/icons/list-icon.png" alt="List View" />
+                    </button>
+                    <button
+                        className={`view-icon-btn ${currentView === 'CALENDAR' ? 'active' : ''}`}
+                        onClick={() => onViewChange('CALENDAR')}
+                        title="Calendar View"
+                    >
+                        <img src="/icons/calendar-icon.png" alt="Calendar View" />
+                    </button>
+                </div>
             </div>
 
+            <h2>Filters</h2>
+
+            {/* Group by Section */}
             <div className="filter-group">
-                <p className="filter-label">Time Frame</p>
-                <label>
-                    <input type="radio" name="time" defaultChecked /> All
-                </label>
-                <label>
-                    <input type="radio" name="time" /> 1 month
-                </label>
-                <label>
-                    <input type="radio" name="time" /> 3 months
-                </label>
-                <label>
-                    <input type="radio" name="time" /> 1 year
-                </label>
+                <div className="filter-header" onClick={() => setIsGroupByExpanded(!isGroupByExpanded)}>
+                    <p className="filter-label">Group by</p>
+                    <button className="toggle-btn">{isGroupByExpanded ? '-' : '+'}</button>
+                </div>
+                {isGroupByExpanded && (
+                    <div className="filter-content">
+                        <label>
+                            <input type="radio" name="group" defaultChecked /> Emotion
+                        </label>
+                        <label>
+                            <input type="radio" name="group" /> Ideas
+                        </label>
+                    </div>
+                )}
+            </div>
+
+            {/* Time Frame Section */}
+            <div className="filter-group">
+                <div className="filter-header" onClick={() => setIsTimeFrameExpanded(!isTimeFrameExpanded)}>
+                    <p className="filter-label">Time Frame</p>
+                    <button className="toggle-btn">{isTimeFrameExpanded ? '-' : '+'}</button>
+                </div>
+                {isTimeFrameExpanded && (
+                    <div className="filter-content">
+                        <label>
+                            <input type="radio" name="time" defaultChecked /> All
+                        </label>
+                        <label>
+                            <input type="radio" name="time" /> 1 month
+                        </label>
+                        <label>
+                            <input type="radio" name="time" /> 3 months
+                        </label>
+                        <label>
+                            <input type="radio" name="time" /> 1 year
+                        </label>
+                    </div>
+                )}
             </div>
         </div>
     );

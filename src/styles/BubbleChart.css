@@ -1,30 +1,35 @@
 /* src/styles/BubbleChart.css */
 .bubble-chart-container {
-    flex: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: flex-start;
-    justify-content: flex-start;
-    margin-left: 20px;
-    background-color: #ffece6;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.bubble {
-    background-color: #fbdacb;
-    color: #5a3e36;
-    border-radius: 50%;
-    text-align: center;
-    font-weight: 600;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    background: transparent;
+    overflow: hidden;
+    transform: translate(-5%, -2%); /* Offset left and up to center on screen */
 }
 
-.bubble-text {
-    display: inline-block;
-    text-align: center;
+.bubble-chart {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    overflow: visible; /* Allow bubbles to render properly */
+}
+
+.emotion-details {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    max-width: 250px;
+    z-index: 100;
 }
