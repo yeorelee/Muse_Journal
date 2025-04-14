@@ -1,34 +1,89 @@
 // src/components/ListView.jsx
-import React from 'react';
+import React, { useState } from 'react';
+import FilterPanel from './FilterPanel';
 import '../styles/ListView.css';
 
-function ListView({ journalEntries, onReturnToGraph }) {
+function ListView({ journalEntries, onSwitchView, currentView, onFilterByTimeRange, activeFilters, onEditEntry }) {
+    // State for sorting options
+    const [sortBy, setSortBy] = useState('newest');
+
+    // Sort entries based on current sort selection
+    const sortedEntries = [...journalEntries].sort((a, b) => {
+        if (sortBy === 'newest') {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        } else {
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        }
+    });
+
+    // Handler for navigating to edit page
+    const handleEntryClick = (entry) => {
+        onEditEntry(entry);
+    };
+
     return (
         <div className="list-view-container">
-            {/* Top bar with a return/back button */}
             <div className="list-view-header">
-                <button onClick={onReturnToGraph} className="return-btn">← return to graph</button>
-                <div className="spacer"></div>
-                {/* Example icons or placeholders */}
-                <div className="icons-area">
-                    <i className="calendar-icon">📅</i>
-                    <i className="filter-icon">⚙️</i>
-                </div>
-            </div>
+                <button className="return-to-graph-btn" onClick={onSwitchView}>
+                    <span className="arrow">&lt;</span>
+                    return to graph
+                </button>
 
-            {/* A heading or optional summary */}
-            <div className="suggestion-banner">
-                <h2>Your Entries</h2>
-            </div>
-
-            {/* Entry cards in a grid layout */}
-            <div className="entries-grid">
-                {journalEntries.map(entry => (
-                    <div key={entry.id} className="entry-card">
-                        <h3>{entry.date}</h3>
-                        <p>{entry.text}</p>
+                {activeFilters.emotion && (
+                    <div className="active-filters">
+                        <span>Filtered by: {activeFilters.emotion}</span>
                     </div>
-                ))}
+                )}
+            </div>
+
+            <div className="list-content">
+                <div className="entries-container">
+                    <div className="list-controls">
+                        <div className="sort-control">
+                            <label>Sort by: </label>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                            >
+                                <option value="newest">Newest first</option>
+                                <option value="oldest">Oldest first</option>
+                            </select>
+                        </div>
+                        <div className="entries-count">
+                            {journalEntries.length} entries
+                        </div>
+                    </div>
+
+                    {sortedEntries.length > 0 ? (
+                        <div className="entries-list">
+                            {sortedEntries.map(entry => (
+                                <div
+                                    key={entry.id}
+                                    className="entry-card"
+                                    onClick={() => handleEntryClick(entry)}
+                                >
+                                    <div className="entry-header">
+                                        <div className="entry-date">{entry.date}</div>
+                                        <div className={`emotion-tag emotion-${entry.emotion.toLowerCase()}`}>
+                                            {entry.emotion}
+                                        </div>
+                                    </div>
+                                    <div className="entry-content">
+                                        <div className="entry-text">
+                                            {entry.text.length > 200
+                                                ? `${entry.text.substring(0, 200)}...`
+                                                : entry.text}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="empty-entries-message">
+                            <p>No journal entries match your filters</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

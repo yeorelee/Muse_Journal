@@ -3,11 +3,19 @@ import './index.css'; // global layout
 import GraphView from './components/GraphView';
 import ListView from './components/ListView';
 import AddEntryModal from './components/AddEntryModal';
+import FullPageEditor from './components/FullPageEditor';
 
 function App() {
     const [currentView, setCurrentView] = useState('GRAPH');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [journalEntries, setJournalEntries] = useState([/* entries */]);
+    const [selectedEntryForEditing, setSelectedEntryForEditing] = useState(null);
+
+    // For editor temporary state
+    const [editorText, setEditorText] = useState('');
+    const [editorEmotion, setEditorEmotion] = useState('');
+    const [editorDate, setEditorDate] = useState('');
+
     // Add filter states
     const [activeFilters, setActiveFilters] = useState({
         emotion: null,
@@ -24,6 +32,38 @@ function App() {
     const handleFilterByTimeRange = (timeRange) => {
         setActiveFilters(prev => ({...prev, timeRange}));
         // Note: We don't switch views when changing time range
+    };
+
+    const handleEditEntry = (entry) => {
+        setSelectedEntryForEditing(entry);
+        // Set up editor state values from the entry
+        setEditorText(entry.text);
+        setEditorEmotion(entry.emotion);
+        // Format date for input if timestamp exists
+        const entryDate = entry.timestamp instanceof Date ?
+            entry.timestamp.toISOString().split('T')[0] :
+            new Date().toISOString().split('T')[0];
+        setEditorDate(entryDate);
+        setCurrentView('editor');
+    };
+
+    // Handle saving edited entry
+    const handleSaveEditorEntry = () => {
+        const updatedEntry = {
+            ...selectedEntryForEditing,
+            text: editorText,
+            emotion: editorEmotion,
+            date: new Date(editorDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            timestamp: new Date(editorDate)
+        };
+
+        setJournalEntries(prevEntries =>
+            prevEntries.map(entry =>
+                entry.id === updatedEntry.id ? updatedEntry : entry
+            )
+        );
+        setCurrentView('LIST');
+        setSelectedEntryForEditing(null);
     };
 
     // Function to get filtered entries based on both emotion and time
@@ -105,11 +145,29 @@ function App() {
                             journalEntries={getFilteredEntries()}
                             onReturnToGraph={() => {
                                 setCurrentView('GRAPH');
-                                clearFilters(); // Optional: clear filters when going back to graph
+                                clearFilters();
                             }}
                             currentView={currentView}
                             onFilterByTimeRange={handleFilterByTimeRange}
                             activeFilters={activeFilters}
+                            onEditEntry={handleEditEntry}
+                        />
+                    </div>
+                )}
+                {currentView === 'editor' && selectedEntryForEditing && (
+                    <div className="right-panel">
+                        <FullPageEditor
+                            entryText={editorText}
+                            setEntryText={setEditorText}
+                            emotion={editorEmotion}
+                            setEmotion={setEditorEmotion}
+                            date={editorDate}
+                            setDate={setEditorDate}
+                            onSave={handleSaveEditorEntry}
+                            onClose={() => {
+                                setCurrentView('LIST');
+                                setSelectedEntryForEditing(null);
+                            }}
                         />
                     </div>
                 )}
