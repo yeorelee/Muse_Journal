@@ -1,14 +1,15 @@
-// src/components/AddEntryModal.jsx
+// src/components/AddEntryModal.jsx - Modified
 import React, { useState, useEffect } from 'react';
 import VoiceRecognition from './VoiceRecognition';
+import FullPageEditor from './FullPageEditor';
 import '../styles/AddEntryModal.css';
 
-function AddEntryModal({ onAddEntry }) {
-    const [isOpen, setIsOpen] = useState(false);
+function AddEntryModal({ onAddEntry, isOpen, setIsOpen }) {
     const [entryText, setEntryText] = useState('');
     const [emotion, setEmotion] = useState('Sad');
     const [charCount, setCharCount] = useState(0);
     const [date, setDate] = useState(formatDate(new Date()));
+    const [isFullScreen, setIsFullScreen] = useState(false);
 
     // Update character count when text changes
     useEffect(() => {
@@ -18,21 +19,22 @@ function AddEntryModal({ onAddEntry }) {
     // Handle ESC key to close modal
     useEffect(() => {
         const handleEsc = (e) => {
-            if (e.key === 'Escape' && isOpen) setIsOpen(false);
+            if (e.key === 'Escape' && isOpen && !isFullScreen) setIsOpen(false);
         };
 
         window.addEventListener('keydown', handleEsc);
         return () => window.removeEventListener('keydown', handleEsc);
-    }, [isOpen]);
+    }, [isOpen, setIsOpen, isFullScreen]);
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         if (entryText.trim() !== '') {
             onAddEntry(entryText, emotion, new Date(date));
             setEntryText('');
             setEmotion('Sad');
             setDate(formatDate(new Date()));
             setIsOpen(false);
+            setIsFullScreen(false);
         }
     };
 
@@ -41,17 +43,38 @@ function AddEntryModal({ onAddEntry }) {
         return date.toISOString().split('T')[0];
     }
 
+    // Toggle to full-screen editor
+    const handleExpandEditor = () => {
+        setIsFullScreen(true);
+    };
+
+    // Close full-screen editor
+    const handleCloseFullScreen = () => {
+        setIsFullScreen(false);
+    };
+
     return (
         <>
             <button className="add-entry-btn" onClick={() => setIsOpen(true)}>
                 +
             </button>
-            {isOpen && (
+            {isOpen && !isFullScreen && (
                 <div className="modal-overlay" onClick={() => setIsOpen(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h2>New Journal Entry</h2>
-                            <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>
+                            <div className="modal-header-actions">
+                                <button
+                                    className="expand-btn"
+                                    onClick={handleExpandEditor}
+                                    title="Expand to full editor"
+                                >
+                                    <svg viewBox="0 0 24 24" width="18" height="18">
+                                        <path fill="currentColor" d="M3,3H9V5H5V9H3V3M21,3V9H19V5H15V3H21M3,21V15H5V19H9V21H3M19,21H15V19H19V15H21V21Z"/>
+                                    </svg>
+                                </button>
+                                <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>
+                            </div>
                         </div>
 
                         <form onSubmit={handleSubmit}>
@@ -82,18 +105,19 @@ function AddEntryModal({ onAddEntry }) {
 
                             <div className="form-group">
                                 <label htmlFor="entry-text">What's on your mind?</label>
-                                <textarea
-                                    id="entry-text"
-                                    value={entryText}
-                                    onChange={(e) => setEntryText(e.target.value)}
-                                    placeholder="Write your thoughts here..."
-                                    rows="6"
-                                ></textarea>
-                                <div className="char-count">{charCount} characters</div>
-                            </div>
-
-                            <div className="voice-recognition-container">
-                                <VoiceRecognition setEntryText={setEntryText} />
+                                <div className="textarea-container">
+                                    <textarea
+                                        id="entry-text"
+                                        value={entryText}
+                                        onChange={(e) => setEntryText(e.target.value)}
+                                        placeholder="Write your thoughts here..."
+                                        rows="6"
+                                    ></textarea>
+                                    <div className="textarea-controls">
+                                        <div className="char-count">{charCount} characters</div>
+                                        <VoiceRecognition setEntryText={setEntryText} />
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="modal-actions">
@@ -103,6 +127,19 @@ function AddEntryModal({ onAddEntry }) {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {isOpen && isFullScreen && (
+                <FullPageEditor
+                    entryText={entryText}
+                    setEntryText={setEntryText}
+                    emotion={emotion}
+                    setEmotion={setEmotion}
+                    date={date}
+                    setDate={setDate}
+                    onSave={handleSubmit}
+                    onClose={handleCloseFullScreen}
+                />
             )}
         </>
     );

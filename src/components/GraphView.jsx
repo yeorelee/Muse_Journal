@@ -4,7 +4,16 @@ import BubbleChartForce from './BubbleChartForce';
 import FilterPanel from './FilterPanel';
 import '../styles/GraphView.css';
 
-function GraphView({ journalEntries, onSwitchView, currentView }) {
+// In GraphView.jsx
+function GraphView({
+                       journalEntries,
+                       onSwitchView,
+                       currentView,
+                       onAddEntryClick,
+                       onFilterByEmotion,
+                       onFilterByTimeRange,
+                       activeFilters
+                   }) {
     return (
         <div className="graph-view-container">
             <div className="graph-content">
@@ -12,10 +21,16 @@ function GraphView({ journalEntries, onSwitchView, currentView }) {
                     <FilterPanel
                         currentView={currentView}
                         onViewChange={onSwitchView}
+                        onFilterByTimeRange={onFilterByTimeRange}
+                        activeFilters={activeFilters}
                     />
                 </div>
                 <div className="chart-side">
-                    <BubbleChartForce entries={journalEntries} />
+                    <BubbleChartForce
+                        entries={journalEntries}
+                        onAddEntryClick={onAddEntryClick}
+                        onEmotionSelect={onFilterByEmotion}
+                    />
                 </div>
             </div>
         </div>

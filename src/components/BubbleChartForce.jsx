@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import '../styles/BubbleChart.css';
 
-function BubbleChartForce({ entries }) {
+function BubbleChartForce({ entries, onAddEntryClick, onEmotionSelect }) {
     const svgRef = useRef(null);
     const containerRef = useRef(null);
     const [selectedBubble, setSelectedBubble] = useState(null);
@@ -74,7 +74,8 @@ function BubbleChartForce({ entries }) {
             .attr('class', 'bubble')
             .style('cursor', 'pointer')
             .on('click', (event, d) => {
-                setSelectedBubble(prev => prev === d ? null : d);
+                // Instead of just selecting the bubble, navigate to the filtered list view
+                onEmotionSelect(d.emotion);
                 event.stopPropagation();
             });
 
@@ -238,13 +239,31 @@ function BubbleChartForce({ entries }) {
 
     return (
         <div className="bubble-chart-container" ref={containerRef}>
-            <svg ref={svgRef} className="bubble-chart" />
-            {selectedBubble && (
-                <div className="emotion-details">
-                    <h3>{selectedBubble.emotion}</h3>
-                    <p>{selectedBubble.count} entries</p>
-                    <button onClick={() => setSelectedBubble(null)}>Close</button>
+            {entries.length === 0 ? (
+                <div className="empty-state">
+                    <div className="empty-message">
+                        <h2>No journal entries yet</h2>
+                        <p>Start your journey by adding your first entry</p>
+                        <div
+                            className="arrow-container clickable"
+                            onClick={onAddEntryClick}
+                            title="Add your first entry"
+                        >
+                            <div className="arrow-down"></div>
+                        </div>
+                    </div>
                 </div>
+            ) : (
+                <>
+                    <svg ref={svgRef} className="bubble-chart" />
+                    {selectedBubble && (
+                        <div className="emotion-details">
+                            <h3>{selectedBubble.emotion}</h3>
+                            <p>{selectedBubble.count} entries</p>
+                            <button onClick={() => setSelectedBubble(null)}>Close</button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

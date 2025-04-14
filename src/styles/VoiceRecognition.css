@@ -1,0 +1,72 @@
+/* src/styles/VoiceRecognition.css */
+.voice-recognition-button {
+    position: relative;
+    display: inline-flex;
+}
+
+.mic-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #888;
+    padding: 0;
+    outline: none;
+    position: relative;
+}
+
+.mic-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.mic-button:hover {
+    border-color: #fa9775;
+    color: #fa9775;
+}
+
+.mic-button.listening {
+    background-color: #fa9775;
+    color: white;
+    border-color: #fa9775;
+    box-shadow: 0 0 0 rgba(250, 151, 117, 0.4);
+}
+
+.pulse-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: #f00;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+.error-message {
+    position: absolute;
+    font-size: 12px;
+    color: #f44336;
+    white-space: nowrap;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 5px rgba(255, 0, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+}

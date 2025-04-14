@@ -186,3 +186,65 @@ form {
         transform: translateY(0);
     }
 }
+
+/* Add to src/styles/AddEntryModal.css */
+.textarea-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.textarea-header label {
+    margin-bottom: 0;
+}
+
+/* Add to src/styles/AddEntryModal.css */
+.textarea-container {
+    position: relative;
+}
+
+.textarea-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.char-count {
+    font-size: 13px;
+    color: #888;
+    margin: 0;
+}
+
+.voice-recognition-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+/* Add to src/styles/AddEntryModal.css */
+.modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.expand-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    color: #888;
+    transition: all 0.2s ease;
+}
+
+.expand-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
