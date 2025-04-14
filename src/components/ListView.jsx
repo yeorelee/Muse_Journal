@@ -21,6 +21,22 @@ function ListView({ journalEntries, onSwitchView, currentView, onFilterByTimeRan
         onEditEntry(entry);
     };
 
+    function truncateHtml(html, maxLength) {
+        // Create a temporary div to parse the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // Get text content only
+        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+
+        if (textContent.length <= maxLength) {
+            return html;
+        }
+
+        // If text is longer than maxLength, return a simplified version
+        return textContent.substring(0, maxLength) + '...';
+    }
+
     return (
         <div className="list-view-container">
             <div className="list-view-header">
@@ -69,10 +85,12 @@ function ListView({ journalEntries, onSwitchView, currentView, onFilterByTimeRan
                                         </div>
                                     </div>
                                     <div className="entry-content">
-                                        <div className="entry-text">
-                                            {entry.text.length > 200
-                                                ? `${entry.text.substring(0, 200)}...`
-                                                : entry.text}
+                                        <div className="entry-text"
+                                             dangerouslySetInnerHTML={{
+                                                 __html: entry.text.length > 200
+                                                     ? truncateHtml(entry.text, 200)
+                                                     : entry.text
+                                             }}>
                                         </div>
                                     </div>
                                 </div>

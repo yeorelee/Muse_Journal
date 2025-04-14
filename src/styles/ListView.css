@@ -212,7 +212,7 @@
     color: #333;
     max-height: 200px;
     width: 100%; /* Fill available space in parent */
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden; /* Prevent horizontal overflow */
     word-wrap: break-word; /* Break long words */
     overflow-wrap: break-word; /* Modern property for breaking words */
