@@ -143,7 +143,10 @@ function App() {
                     <div className="right-panel">
                         <ListView
                             journalEntries={getFilteredEntries()}
-                            onSwitchView={() => setCurrentView('GRAPH')}
+                            onSwitchView={() => {
+                                setCurrentView('GRAPH');
+                                clearFilters();
+                            }}
                             onReturnToGraph={() => {
                                 setCurrentView('GRAPH');
                                 clearFilters();
