@@ -48,16 +48,35 @@ function AddEntryModal({ onAddEntry, isOpen, setIsOpen }) {
         setIsFullScreen(true);
     };
 
-    // Close full-screen editor
-    const handleCloseFullScreen = () => {
+    // Minimize to compact editor
+    const handleMinimizeEditor = () => {
         setIsFullScreen(false);
     };
 
     return (
         <>
-            <button className="add-entry-btn" onClick={() => setIsOpen(true)}>
+            <button className="add-entry-btn" onClick={() => {
+                setIsOpen(true);
+                setIsFullScreen(true);
+            }}>
                 +
             </button>
+            {isOpen && isFullScreen && (
+                <FullPageEditor
+                    entryText={entryText}
+                    setEntryText={setEntryText}
+                    emotion={emotion}
+                    setEmotion={setEmotion}
+                    date={date}
+                    setDate={setDate}
+                    onSave={handleSubmit}
+                    onClose={() => {
+                        setIsOpen(false);
+                        setIsFullScreen(false);
+                    }}
+                />
+            )}
+
             {isOpen && !isFullScreen && (
                 <div className="modal-overlay" onClick={() => setIsOpen(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -65,9 +84,9 @@ function AddEntryModal({ onAddEntry, isOpen, setIsOpen }) {
                             <h2>New Journal Entry</h2>
                             <div className="modal-header-actions">
                                 <button
-                                    className="expand-btn"
-                                    onClick={handleExpandEditor}
-                                    title="Expand to full editor"
+                                    className="minimize-btn"
+                                    onClick={handleMinimizeEditor}
+                                    title="Minimize to compact editor"
                                 >
                                     <svg viewBox="0 0 24 24" width="18" height="18">
                                         <path fill="currentColor" d="M3,3H9V5H5V9H3V3M21,3V9H19V5H15V3H21M3,21V15H5V19H9V21H3M19,21H15V19H19V15H21V21Z"/>
@@ -127,19 +146,6 @@ function AddEntryModal({ onAddEntry, isOpen, setIsOpen }) {
                         </form>
                     </div>
                 </div>
-            )}
-
-            {isOpen && isFullScreen && (
-                <FullPageEditor
-                    entryText={entryText}
-                    setEntryText={setEntryText}
-                    emotion={emotion}
-                    setEmotion={setEmotion}
-                    date={date}
-                    setDate={setDate}
-                    onSave={handleSubmit}
-                    onClose={handleCloseFullScreen}
-                />
             )}
         </>
     );
