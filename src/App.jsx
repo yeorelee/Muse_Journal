@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import './index.css'; // global layout
 import GraphView from './components/GraphView';
 import ListView from './components/ListView';
-import AddEntryModal from './components/AddEntryModal';
 import FullPageEditor from './components/FullPageEditor';
+import './styles/AddEntryModal.css';
 
 function App() {
     const [currentView, setCurrentView] = useState('GRAPH');
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [journalEntries, setJournalEntries] = useState([/* entries */]);
     const [selectedEntryForEditing, setSelectedEntryForEditing] = useState(null);
-
-    // For editor temporary state
+    
+    // For editor state (both new entries and editing)
     const [editorText, setEditorText] = useState('');
-    const [editorEmotion, setEditorEmotion] = useState('');
-    const [editorDate, setEditorDate] = useState('');
+    const [editorEmotion, setEditorEmotion] = useState('Sad');
+    const [editorDate, setEditorDate] = useState(new Date().toISOString().split('T')[0]);
+    const [isCreatingNewEntry, setIsCreatingNewEntry] = useState(false);
 
     // Add filter states
     const [activeFilters, setActiveFilters] = useState({
@@ -31,9 +31,20 @@ function App() {
     // Add time range filtering function
     const handleFilterByTimeRange = (timeRange) => {
         setActiveFilters(prev => ({...prev, timeRange}));
-        // Note: We don't switch views when changing time range
     };
 
+    // Handle opening editor for a new entry
+    const handleAddEntryClick = () => {
+        // Reset editor state for a new entry
+        setEditorText('');
+        setEditorEmotion('Sad');
+        setEditorDate(new Date().toISOString().split('T')[0]);
+        setIsCreatingNewEntry(true);
+        setSelectedEntryForEditing(null);
+        setCurrentView('editor');
+    };
+
+    // Handle opening editor for editing an existing entry
     const handleEditEntry = (entry) => {
         setSelectedEntryForEditing(entry);
         // Set up editor state values from the entry
@@ -44,26 +55,41 @@ function App() {
             entry.timestamp.toISOString().split('T')[0] :
             new Date().toISOString().split('T')[0];
         setEditorDate(entryDate);
+        setIsCreatingNewEntry(false);
         setCurrentView('editor');
     };
 
-    // Handle saving edited entry
+    // Handle saving an entry (both new and edited)
     const handleSaveEditorEntry = () => {
-        const updatedEntry = {
-            ...selectedEntryForEditing,
-            text: editorText,
-            emotion: editorEmotion,
-            date: new Date(editorDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-            timestamp: new Date(editorDate)
-        };
+        if (isCreatingNewEntry) {
+            // Create a new entry
+            const newEntry = {
+                id: Date.now(),
+                date: new Date(editorDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+                timestamp: new Date(editorDate),
+                emotion: editorEmotion,
+                text: editorText,
+            };
+            setJournalEntries(prev => [...prev, newEntry]);
+        } else {
+            // Update existing entry
+            const updatedEntry = {
+                ...selectedEntryForEditing,
+                text: editorText,
+                emotion: editorEmotion,
+                date: new Date(editorDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+                timestamp: new Date(editorDate)
+            };
 
-        setJournalEntries(prevEntries =>
-            prevEntries.map(entry =>
-                entry.id === updatedEntry.id ? updatedEntry : entry
-            )
-        );
+            setJournalEntries(prevEntries =>
+                prevEntries.map(entry =>
+                    entry.id === updatedEntry.id ? updatedEntry : entry
+                )
+            );
+        }
         setCurrentView('LIST');
         setSelectedEntryForEditing(null);
+        setIsCreatingNewEntry(false);
     };
 
     // Function to get filtered entries based on both emotion and time
@@ -111,18 +137,6 @@ function App() {
         });
     };
 
-    const addEntry = (entryText, emotion, entryDate) => {
-        const newEntry = {
-            id: Date.now(),
-            date: entryDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-            timestamp: entryDate, // Store the actual date object for sorting
-            emotion,
-            text: entryText,
-        };
-        setJournalEntries(prev => [...prev, newEntry]);
-    };
-
-    // Update the return statement to pass these new props
     return (
         <div className="app-container">
             <div className="main-content">
@@ -132,7 +146,7 @@ function App() {
                             journalEntries={journalEntries}
                             onSwitchView={() => setCurrentView('LIST')}
                             currentView={currentView}
-                            onAddEntryClick={() => setIsAddModalOpen(true)}
+                            onAddEntryClick={handleAddEntryClick}
                             onFilterByEmotion={handleFilterByEmotion}
                             onFilterByTimeRange={handleFilterByTimeRange}
                             activeFilters={activeFilters}
@@ -158,7 +172,7 @@ function App() {
                         />
                     </div>
                 )}
-                {currentView === 'editor' && selectedEntryForEditing && (
+                {currentView === 'editor' && (
                     <div className="right-panel">
                         <FullPageEditor
                             entryText={editorText}
@@ -169,19 +183,21 @@ function App() {
                             setDate={setEditorDate}
                             onSave={handleSaveEditorEntry}
                             onClose={() => {
-                                setCurrentView('LIST');
+                                setCurrentView(selectedEntryForEditing ? 'LIST' : 'GRAPH');
                                 setSelectedEntryForEditing(null);
+                                setIsCreatingNewEntry(false);
                             }}
                         />
                     </div>
                 )}
             </div>
 
-            <AddEntryModal
-                onAddEntry={addEntry}
-                isOpen={isAddModalOpen}
-                setIsOpen={setIsAddModalOpen}
-            />
+            {/* Move "+" button outside of the modal */}
+            {currentView !== 'editor' && (
+                <button className="add-entry-btn" onClick={handleAddEntryClick}>
+                    +
+                </button>
+            )}
         </div>
     );
 }

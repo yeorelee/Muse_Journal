@@ -3,7 +3,13 @@ import React, { useState } from 'react';
 import FilterPanel from './FilterPanel';
 import '../styles/ListView.css';
 
-function ListView({ journalEntries, onSwitchView, currentView, onFilterByTimeRange, activeFilters, onEditEntry }) {
+function ListView({ 
+    journalEntries, 
+    onSwitchView, 
+    onReturnToGraph,
+    onFilterByTimeRange,
+    activeFilters,
+    onEditEntry }) {
     // State for sorting options
     const [sortBy, setSortBy] = useState('newest');
 

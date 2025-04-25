@@ -37,26 +37,6 @@ function FilterPanel({ currentView, onViewChange }) {
                 </div>
             </div>
 
-            <h2>Filters</h2>
-
-            {/* Group by Section */}
-            <div className="filter-group">
-                <div className="filter-header" onClick={() => setIsGroupByExpanded(!isGroupByExpanded)}>
-                    <p className="filter-label">Group by</p>
-                    <button className="toggle-btn">{isGroupByExpanded ? '-' : '+'}</button>
-                </div>
-                {isGroupByExpanded && (
-                    <div className="filter-content">
-                        <label>
-                            <input type="radio" name="group" defaultChecked /> Emotion
-                        </label>
-                        <label>
-                            <input type="radio" name="group" /> Ideas
-                        </label>
-                    </div>
-                )}
-            </div>
-
             {/* Time Frame Section */}
             <div className="filter-group">
                 <div className="filter-header" onClick={() => setIsTimeFrameExpanded(!isTimeFrameExpanded)}>
