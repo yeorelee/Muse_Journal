@@ -59,26 +59,33 @@ function App() {
         setCurrentView('editor');
     };
 
-    // Handle saving an entry (both new and edited)
-    const handleSaveEditorEntry = () => {
+    // Update the handleSaveEditorEntry function
+    const handleSaveEditorEntry = async (editorContent) => {
+        // Use the content passed from the FullPageEditor component
+        const plainText = editorContent.plainText;
+        const htmlContent = editorContent.html;
+        
+        // Generate the summary if needed
+        const summary = await generateEntrySummary(plainText);
+        
         if (isCreatingNewEntry) {
-            // Create a new entry
             const newEntry = {
                 id: Date.now(),
                 date: new Date(editorDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
                 timestamp: new Date(editorDate),
                 emotion: editorEmotion,
-                text: editorText,
+                text: htmlContent, // Store the HTML content
+                summary: summary
             };
             setJournalEntries(prev => [...prev, newEntry]);
         } else {
-            // Update existing entry
             const updatedEntry = {
                 ...selectedEntryForEditing,
-                text: editorText,
+                text: htmlContent, // Store the HTML content
                 emotion: editorEmotion,
                 date: new Date(editorDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-                timestamp: new Date(editorDate)
+                timestamp: new Date(editorDate),
+                summary: summary
             };
 
             setJournalEntries(prevEntries =>
@@ -87,7 +94,8 @@ function App() {
                 )
             );
         }
-        setCurrentView('LIST');
+        
+        setCurrentView('GRAPH');
         setSelectedEntryForEditing(null);
         setIsCreatingNewEntry(false);
     };
@@ -137,13 +145,46 @@ function App() {
         });
     };
 
+    // Add this function to generate summaries
+    const generateEntrySummary = async (entryText) => {
+        try {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are a journal assistant. Summarize the following journal entry in the first person in 2-3 concise sentences. If the journal entry makes no sense, say "No summary available".'
+                        },
+                        {
+                            role: 'user',
+                            content: entryText
+                        }
+                    ],
+                    max_tokens: 100
+                })
+            });
+            
+            const data = await response.json();
+            return data.choices[0].message.content.trim();
+        } catch (error) {
+            console.error('Error generating summary:', error);
+            return 'No summary available';
+        }
+    };
+
     return (
         <div className="app-container">
             <div className="main-content">
                 {currentView === 'GRAPH' && (
                     <div className="left-panel">
                         <GraphView
-                            journalEntries={journalEntries}
+                            journalEntries={getFilteredEntries()}  // Changed from journalEntries
                             onSwitchView={() => setCurrentView('LIST')}
                             currentView={currentView}
                             onAddEntryClick={handleAddEntryClick}

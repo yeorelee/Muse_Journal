@@ -2,9 +2,14 @@
 import React, { useState } from 'react';
 import '../styles/FilterPanel.css';
 
-function FilterPanel({ currentView, onViewChange }) {
+function FilterPanel({ currentView, onViewChange, onFilterByTimeRange, activeFilters }) {
     const [isGroupByExpanded, setIsGroupByExpanded] = useState(true);
     const [isTimeFrameExpanded, setIsTimeFrameExpanded] = useState(true);
+
+    // Handle time range filter selection
+    const handleTimeRangeChange = (timeRange) => {
+        onFilterByTimeRange(timeRange);
+    };
 
     return (
         <div className="filter-panel">
@@ -46,16 +51,36 @@ function FilterPanel({ currentView, onViewChange }) {
                 {isTimeFrameExpanded && (
                     <div className="filter-content">
                         <label>
-                            <input type="radio" name="time" defaultChecked /> All
+                            <input 
+                                type="radio" 
+                                name="time" 
+                                checked={activeFilters.timeRange === null} 
+                                onChange={() => handleTimeRangeChange(null)} 
+                            /> All
                         </label>
                         <label>
-                            <input type="radio" name="time" /> 1 month
+                            <input 
+                                type="radio" 
+                                name="time" 
+                                checked={activeFilters.timeRange === 'week'}
+                                onChange={() => handleTimeRangeChange('week')} 
+                            /> This Week
                         </label>
                         <label>
-                            <input type="radio" name="time" /> 3 months
+                            <input 
+                                type="radio" 
+                                name="time" 
+                                checked={activeFilters.timeRange === 'month'}
+                                onChange={() => handleTimeRangeChange('month')} 
+                            /> This Month
                         </label>
                         <label>
-                            <input type="radio" name="time" /> 1 year
+                            <input 
+                                type="radio" 
+                                name="time" 
+                                checked={activeFilters.timeRange === 'year'}
+                                onChange={() => handleTimeRangeChange('year')} 
+                            /> This Year
                         </label>
                     </div>
                 )}

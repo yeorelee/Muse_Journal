@@ -91,13 +91,20 @@ function ListView({
                                         </div>
                                     </div>
                                     <div className="entry-content">
+                                      {entry.summary ? (
+                                        <div className="entry-summary">
+                                          <div className="summary-indicator">AI Summary:</div>
+                                          <div className="summary-text">{entry.summary}</div>
+                                        </div>
+                                      ) : (
                                         <div className="entry-text"
                                              dangerouslySetInnerHTML={{
-                                                 __html: entry.text.length > 200
-                                                     ? truncateHtml(entry.text, 200)
-                                                     : entry.text
+                                               __html: entry.text.length > 200
+                                                 ? truncateHtml(entry.text, 200)
+                                                 : entry.text
                                              }}>
                                         </div>
+                                      )}
                                     </div>
                                 </div>
                             ))}

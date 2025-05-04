@@ -13,12 +13,64 @@ import TaskItem from '@tiptap/extension-task-item';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
-import Color from '@tiptap/extension-color';
+import { Extension } from '@tiptap/core';
 import CodeBlock from '@tiptap/extension-code-block';
 import VoiceRecognition from './VoiceRecognition';
 import '../styles/FullPageEditor.css';
 import MuseAIPanel from './MuseAIPanel';
 import logo from '/logo.png'; // Import logo
+import Color from '@tiptap/extension-color'; // Import Color extension first
+
+// Create a custom extension to restrict direct color usage
+const RestrictedColorExtension = Extension.create({
+    name: 'restrictedColor',
+    
+    // Add a flag to track if the color is being set programmatically
+    addStorage() {
+        return {
+            programmaticColorChange: false
+        }
+    },
+
+    addGlobalAttributes() {
+        return [
+            {
+                types: ['textStyle'],
+                attributes: {
+                    color: {
+                        default: null,
+                        parseHTML: (element) => {
+                            const color = element.style.color;
+                            // Only block the reserved color if it's not a programmatic change
+                            if ((color === '#fa9775' || color === 'rgb(250, 151, 117)') && !this.storage.programmaticColorChange) {
+                                return null;
+                            }
+                            return color;
+                        }
+                    }
+                }
+            }
+        ];
+    },
+
+    // Add methods to enable/disable the restriction
+    addCommands() {
+        return {
+            allowMuseColor: () => ({ tr, dispatch }) => {
+                if (dispatch) {
+                    this.storage.programmaticColorChange = true;
+                }
+                return true;
+            },
+            resetColorRestriction: () => ({ tr, dispatch }) => {
+                if (dispatch) {
+                    this.storage.programmaticColorChange = false;
+                }
+                return true;
+            }
+        }
+    }
+});
 
 function FullPageEditor({
                             entryText,
@@ -64,8 +116,11 @@ function FullPageEditor({
                 types: ['heading', 'paragraph'],
             }),
             TextStyle,
-            Color,
+            // Replace the standard Color extension with our restricted version
+            // Color, <- comment this out
+            RestrictedColorExtension,
             CodeBlock,
+            Color, // Add Color extension
         ],
         content: entryText,
         onUpdate: ({ editor }) => {
@@ -77,8 +132,16 @@ function FullPageEditor({
         autofocus: true
     });
 
+    // Modify your handleSave function
     const handleSave = () => {
-        onSave();
+        const htmlContent = editor.getHTML();
+        const plainTextContent = editor.getText();
+        
+        // Pass both HTML and plain text to the parent component
+        onSave({
+            html: htmlContent,
+            plainText: plainTextContent
+        });
     };
 
     // Replace existing askMuseQuestion function
@@ -91,6 +154,32 @@ function FullPageEditor({
         editor.chain().focus().insertContent(html).run();
     };
 
+    // Replace your existing handleInsertAIResponse with this simpler version
+    const handleInsertAIResponse = (formattedResponse) => {
+        if (editor) {
+            // Insert a line break if needed
+            editor.commands.insertContent('\n\n');
+            
+            // Insert raw HTML with a special class and inline styles
+            const styledHTML = `<span class="muse-ai-text" style="color: ${formattedResponse.color}; font-family: ${formattedResponse.fontFamily};">${formattedResponse.text}</span>`;
+            
+            // Insert as raw HTML
+            editor.commands.insertContent(styledHTML, {
+                parseOptions: {
+                    preserveWhitespace: 'full',
+                },
+            });
+            
+            // Add line breaks as a separate paragraph to ensure cursor position
+            editor.commands.insertContent('<p></p>');
+            
+            // Reset text style to black for subsequent typing
+            editor.chain()
+                .focus()
+                .setColor('#000000')
+                .run();
+        }
+    };
 
     const addImage = () => {
         const url = prompt('Enter image URL:');
@@ -315,8 +404,8 @@ function FullPageEditor({
             <MuseAIPanel
                 isOpen={isMusePanelOpen}
                 onClose={() => setIsMusePanelOpen(false)}
-                editorContent={editor ? editor.getText() : ''}
-                onInsertResponse={insertMuseResponse}
+                editorContent={editor ? editor.getHTML() : ''}
+                onInsertResponse={handleInsertAIResponse}
             />
         </div>
     );

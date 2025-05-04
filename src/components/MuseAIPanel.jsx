@@ -118,7 +118,23 @@ function MuseAIPanel({ isOpen, onClose, editorContent, onInsertResponse }) {
     // Function to handle inserting the response into the editor
     const handleInsertResponse = () => {
         if (aiResponse) {
-            onInsertResponse(aiResponse);
+            // Try to extract just the follow-up question (last sentence with a question mark)
+            const sentences = aiResponse.match(/[^.!?]+[.!?]+/g) || [];
+            const questions = sentences.filter(sentence => sentence.trim().endsWith('?'));
+            
+            // Get the last question, or use the full response if none found
+            const textToInsert = questions.length > 0 
+                ? questions[questions.length - 1].trim() 
+                : aiResponse;
+                
+            // Format the text with Muse color and serif font
+            const formattedText = {
+                text: textToInsert,
+                color: '#fa9775', // Muse logo color
+                fontFamily: 'Sans-Serif',
+            };
+            
+            onInsertResponse(formattedText);
             onClose();
         }
     };
